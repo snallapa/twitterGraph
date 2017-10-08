@@ -14,10 +14,6 @@ twitter = twitterClient.Api(consumer_key=data["consumer_key"],
 
 app = Flask(__name__)
 
-@app.route("/")
-def test():
-	return "hello worlds"
-
 @app.route("/friends")
 @app.route("/friends/<userId>")
 def getFriends(userId=None):
