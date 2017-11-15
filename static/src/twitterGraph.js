@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {select, forceSimulation, forceCenter, forceManyBody, forceLink, forceCollide, drag, event} from 'd3';
+import {select, forceSimulation, forceCenter, forceManyBody, forceLink, forceCollide, drag, zoom, event} from 'd3';
 
 const radius = 25;
 
@@ -20,8 +20,8 @@ class TwitterGraph extends Component {
     const svg = select(this.node);
     const width = +svg.attr("width");
     const height = +svg.attr("height");
-    let nodes = svg.append("g").attr("class", "nodes").selectAll(".nodes");
-    let links = svg.append("g").attr("class", "links").selectAll(".links");
+    let nodes = select(this.nodeG).selectAll(".nodes");
+    let links = select(this.linkG).selectAll(".links");
     nodes= nodes.data(this.props.followers);
     const dragstarted = (d) => {
       if (!event.active) simulation.alphaTarget(0.3).restart();
@@ -74,16 +74,19 @@ class TwitterGraph extends Component {
           .attr("y1", (d) => d.source.y)
 		      .attr("x2", (d) => d.target.x)
 		      .attr("y2", (d) => d.target.y);
-      circles.attr("cx", (d) => Math.max(radius, Math.min(width - radius, d.x)))
-           .attr("cy", (d) => Math.max(radius, Math.min(height - radius, d.y)));
+      circles.attr("cx", (d) => d.x)
+           .attr("cy", (d) => d.y);
     });
     simulation.force("link").links(this.props.edges);
+
   }
 
   render() {
     return (
-      <div>
-        <svg ref={node => this.node = node} width={960} height={600}>
+      <div className="graph">
+        <svg ref={node => this.node = node} width={1000} height={650} viewBox="0,0,960,600">
+          <g className="nodes" ref={nodeG => this.nodeG = nodeG}></g>
+          <g className="links" ref={linkG => this.linkG = linkG}></g>
         </svg>
       </div>
     );
